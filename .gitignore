@@ -34,3 +34,4 @@
 # 
 builds/*
 .vscode/*
+test.*

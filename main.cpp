@@ -1,5 +1,4 @@
 // Somethings weird with how I setup glad i think
-#include "glad.c"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -24,6 +23,13 @@ const char *fragmentShaderSource =
     "void main()\n"
     "{\n"
     "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n\0";
+const char *fragmentShaderSourceYlw =
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 1.0f, 0.1f, 1.0f);\n"
     "}\n\0";
 
 int main()
@@ -91,11 +97,31 @@ int main()
                   << infoLog << std::endl;
     }
 
+    // fragment shader (YELLOW)
+    unsigned int fragmentShaderYlw = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShaderYlw, 1, &fragmentShaderSourceYlw, NULL);
+    glCompileShader(fragmentShaderYlw);
+
+    // check for shader compile errors
+    glGetShaderiv(fragmentShaderYlw, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fragmentShaderYlw, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
+    }
+
     // link shaders
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
+
+    // shader program yellow
+    unsigned int shaderProgramYlw = glCreateProgram();
+    glAttachShader(shaderProgramYlw, vertexShader);
+    glAttachShader(shaderProgramYlw, fragmentShaderYlw);
+    glLinkProgram(shaderProgramYlw);
 
     // check for linking errors
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
@@ -107,38 +133,49 @@ int main()
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    glDeleteShader(fragmentShaderYlw);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[] = {
+    float vertices1[] = {
         -1.0f, -1.0f, 0.0f, // left
         0.0f, -1.0f, 0.0f,  // right
-        -0.5f, 0.0f, 0.0f,  // top
+        -0.5f, 0.0f, 0.0f}; // top
+    float vertices2[] = {
         0.0f, 0.0f, 0.0f,
         1.0f, 0.0f, 0.0f,
         0.5f, 1.0f, 0.0f};
 
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    unsigned int VBO1, VAO1, VBO2, VAO2;
+    glGenVertexArrays(1, &VAO1);
+    glGenBuffers(1, &VBO1);
+    glGenVertexArrays(2, &VAO2);
+    glGenBuffers(2, &VBO2);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s),
     //  and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAO1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
     // note that this is allowed, the call to glVertexAttribPointer registered
-    //  VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //  VBO1 as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindVertexArray(VAO2);
 
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally
-    //  modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't
-    //  unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    // You can unbind the VAO1 afterwards so other VAO1 calls won't accidentally
+    //  modify this VAO1, but this rarely happens. Modifying other
+    // VAO1s requires a call to glBindVertexArray anyways so we generally don't
+    //  unbind VAO1s (nor VBO1s) when it's not directly necessary.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     // uncomment this call to draw in wireframe polygons.
@@ -159,11 +196,15 @@ int main()
 
         // draw our first triangle
         glUseProgram(shaderProgram);
-        // seeing as we only have a single VAO there's no need to bind it every
+        // seeing as we only have a single VAO1 there's no need to bind it every
         //  time, but we'll do so to keep things a bit more organized
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(VAO1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         // glBindVertexArray(0); // no need to unbind it every time
+        glUseProgram(shaderProgramYlw);
+        glBindVertexArray(VAO2);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -173,8 +214,8 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO1);
+    glDeleteBuffers(1, &VBO1);
     glDeleteProgram(shaderProgram);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
