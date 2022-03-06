@@ -32,6 +32,7 @@
 *.app
 
 # 
-builds/*
+build/*
 .vscode/*
 test.*
+CMakeLists.txt
