@@ -97,8 +97,8 @@ int main(int argc, char *argv[])
         Snakepong.Render();
 
         glfwSwapBuffers(window);
-        std::cin.get();
-        break;
+        // std::cin.get();
+        // break;
     }
 
     // delete all resources as loaded using the resource manager

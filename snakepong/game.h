@@ -28,15 +28,6 @@ enum GameState
     GAME_LOSE
 };
 
-enum Direction
-{
-    STOP,
-    RIGHT,
-    UP,
-    LEFT,
-    DOWN
-};
-
 // Game holds all game-related state and functionality.
 // Combines all game-related data into a single class for
 // easy access to each of the components and manageability.
@@ -50,12 +41,16 @@ public:
     float timeElapsed;
 
     // rendering specific
-    // unsigned int quadVAO;
+    unsigned int VBO;
+    unsigned int quadVAO;
     Shader SnakeShader;
 
-    // snake game 
+    // snake game
+    glm::ivec2 snakeLvlSize;
     std::vector<glm::ivec2> snakeSegments;
-    Direction snakeDir;
+    glm::ivec2 snakeDir;
+    float snakeMoveInterval; // number of times the snake is moved in snakeDir direction a second
+    float snakeMoveTimer;
     glm::ivec2 applePos;
     const float SEG_SIZE; // size of segments and apple
 
