@@ -1,34 +1,32 @@
+/**
+ * snakepong.cpp
+ * Jeff Henry (jeffvhenry@gmail.com)
+ * A couple 2D opengl games
+ * 2022-03-06
+ */
 
-
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "game.h"
-#include "resource_manager.h"
-
 #include <iostream>
+
+#include "game.h"
 
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 // The Width of the screen
-const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_WIDTH = 1200;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 600;
+const unsigned int SCREEN_HEIGHT = 900;
 
-Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
+Game Snakepong(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char *argv[])
 {
+    // Various configurations for opengl, glad and glfw
+    // ------------------------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -38,7 +36,7 @@ int main(int argc, char *argv[])
 #endif
     glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "snakepong", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers
@@ -58,9 +56,15 @@ int main(int argc, char *argv[])
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // printf("error %d\n", glGetError());
+
     // initialize game
     // ---------------
-    Breakout.Init();
+    Snakepong.Init();
+    // glfwTerminate();
+    // return -1;
+
+    // printf("error %d\n", glGetError());
 
     // deltaTime variables
     // -------------------
@@ -69,28 +73,32 @@ int main(int argc, char *argv[])
 
     while (!glfwWindowShouldClose(window))
     {
+        // printf("error %d\n", glGetError());
         // calculate delta time
         // --------------------
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         glfwPollEvents();
-
+        // printf("error %d\n", glGetError());
         // manage user input
         // -----------------
-        Breakout.ProcessInput(deltaTime);
+        Snakepong.ProcessInput(deltaTime);
+
+        // printf("error %d\n", glGetError());
+        // break;
 
         // update game state
         // -----------------
-        Breakout.Update(deltaTime);
+        Snakepong.Update(deltaTime);
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        Breakout.Render();
+        Snakepong.Render();
 
         glfwSwapBuffers(window);
+        std::cin.get();
+        break;
     }
 
     // delete all resources as loaded using the resource manager
@@ -109,9 +117,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            Breakout.Keys[key] = true;
+            Snakepong.Keys[key] = true;
         else if (action == GLFW_RELEASE)
-            Breakout.Keys[key] = false;
+            Snakepong.Keys[key] = false;
     }
 }
 

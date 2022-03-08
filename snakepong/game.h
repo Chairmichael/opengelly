@@ -1,5 +1,3 @@
-
-
 /*******************************************************************
 ** This code is part of Breakout.
 **
@@ -13,13 +11,30 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <vector>
+
+#include "shader.h"
+#include "resource_manager.h"
 
 // Represents the current state of the game
 enum GameState
 {
-    GAME_ACTIVE,
-    GAME_MENU,
-    GAME_WIN
+    GAME_SNAKE,
+    GAME_PONG,
+    GAME_SNAKEPONG,
+    GAME_SNAKE_WIN,
+    GAME_PONG_WIN,
+    GAME_LOSE
+};
+
+enum Direction
+{
+    STOP,
+    RIGHT,
+    UP,
+    LEFT,
+    DOWN
 };
 
 // Game holds all game-related state and functionality.
@@ -32,6 +47,23 @@ public:
     GameState State;
     bool Keys[1024];
     unsigned int Width, Height;
+    float timeElapsed;
+
+    // rendering specific
+    // unsigned int quadVAO;
+    Shader SnakeShader;
+
+    // snake game 
+    std::vector<glm::ivec2> snakeSegments;
+    Direction snakeDir;
+    glm::ivec2 applePos;
+    const float SEG_SIZE; // size of segments and apple
+
+    // pong game
+    glm::vec2 paddlePos;
+    int paddleDir;
+    float paddleSpeed;
+
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
     ~Game();
@@ -41,6 +73,8 @@ public:
     void ProcessInput(float dt);
     void Update(float dt);
     void Render();
+    void RenderVertices(Shader shader, float verts[], int size, glm::vec4 color);
+    void Reset();
 };
 
 #endif
