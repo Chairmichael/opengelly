@@ -42,15 +42,18 @@ public:
     glm::ivec2 snakeLvlSize;
     std::vector<glm::ivec2> snakeSegments;
     glm::ivec2 snakeDir;
+    glm::ivec2 snakeInputDir;
     float snakeMoveInterval; // number of times the snake is moved in snakeDir direction a second
     float snakeMoveTimer;
     glm::ivec2 applePos;
     const float SEG_SIZE; // size of segments and apple
+    const float SEG_SCALE;
 
     // pong game
-    glm::vec2 paddlePos;
+    glm::vec2 paddlePlayerPos, paddleNPPos, ballPos, ballVelocity;
     int paddleDir;
-    float paddleSpeed;
+    float paddleSpeed, ballSpeed;
+    const glm::vec3 PADDLE_SCALE, BALL_SCALE;
 
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
