@@ -1,32 +1,25 @@
-/**
- * snakepong.cpp
- * Jeff Henry (jeffvhenry@gmail.com)
- * A couple 2D opengl games
- * 2022-03-06
- */
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "game.h"
+#include "resource_manager.h"
+
 #include <iostream>
 
-#include "game.h"
-
 // GLFW function declarations
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // The Width of the screen
-const unsigned int SCREEN_WIDTH = 1200;
+const unsigned int SCREEN_WIDTH = 800;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 900;
+const unsigned int SCREEN_HEIGHT = 600;
 
-Game Snakepong(SCREEN_WIDTH, SCREEN_HEIGHT);
+Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char *argv[])
 {
-    // Various configurations for opengl, glad and glfw
-    // ------------------------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -36,7 +29,7 @@ int main(int argc, char *argv[])
 #endif
     glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "snakepong", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers
@@ -56,15 +49,9 @@ int main(int argc, char *argv[])
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // printf("error %d\n", glGetError());
-
     // initialize game
     // ---------------
-    Snakepong.Init();
-    // glfwTerminate();
-    // return -1;
-
-    // printf("error %d\n", glGetError());
+    Breakout.Init();
 
     // deltaTime variables
     // -------------------
@@ -73,32 +60,28 @@ int main(int argc, char *argv[])
 
     while (!glfwWindowShouldClose(window))
     {
-        // printf("error %d\n", glGetError());
         // calculate delta time
         // --------------------
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         glfwPollEvents();
-        // printf("error %d\n", glGetError());
+
         // manage user input
         // -----------------
-        Snakepong.ProcessInput(deltaTime);
-
-        // printf("error %d\n", glGetError());
-        // break;
+        Breakout.ProcessInput(deltaTime);
 
         // update game state
         // -----------------
-        Snakepong.Update(deltaTime);
+        Breakout.Update(deltaTime);
 
         // render
         // ------
-        Snakepong.Render();
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        Breakout.Render();
 
         glfwSwapBuffers(window);
-        // std::cin.get();
-        // break;
     }
 
     // delete all resources as loaded using the resource manager
@@ -109,7 +92,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
     // when a user presses the escape key, we set the WindowShouldClose property to true, closing the application
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -117,15 +100,18 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            Snakepong.Keys[key] = true;
+            Breakout.Keys[key] = true;
         else if (action == GLFW_RELEASE)
-            Snakepong.Keys[key] = false;
+        {
+            Breakout.Keys[key] = false;
+            Breakout.KeysProcessed[key] = false;
+        }
     }
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and
+    // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }

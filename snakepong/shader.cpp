@@ -2,6 +2,7 @@
 #include "shader.h"
 
 #include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 Shader &Shader::Use()
 {
@@ -9,7 +10,7 @@ Shader &Shader::Use()
     return *this;
 }
 
-void Shader::Compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource)
+void Shader::Compile(const char *vertexSource, const char *fragmentSource, const char *geometrySource)
 {
     unsigned int sVertex, sFragment, gShader;
     // vertex Shader
@@ -95,11 +96,12 @@ void Shader::SetVector4f(const char *name, const glm::vec4 &value, bool useShade
 }
 void Shader::SetMatrix4(const char *name, const glm::mat4 &matrix, bool useShader)
 {
+    std::cout << "projection matrix" << glm::to_string(matrix) << std::endl;
     if (useShader)
         this->Use();
     glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, false, glm::value_ptr(matrix));
+    std::cout << "Set mat" << std::endl;
 }
-
 
 void Shader::checkCompileErrors(unsigned int object, std::string type)
 {
@@ -112,8 +114,8 @@ void Shader::checkCompileErrors(unsigned int object, std::string type)
         {
             glGetShaderInfoLog(object, 1024, NULL, infoLog);
             std::cout << "| ERROR::SHADER: Compile-time error: Type: " << type << "\n"
-                << infoLog << "\n -- --------------------------------------------------- -- "
-                << std::endl;
+                      << infoLog << "\n -- --------------------------------------------------- -- "
+                      << std::endl;
         }
     }
     else
@@ -123,8 +125,9 @@ void Shader::checkCompileErrors(unsigned int object, std::string type)
         {
             glGetProgramInfoLog(object, 1024, NULL, infoLog);
             std::cout << "| ERROR::Shader: Link-time error: Type: " << type << "\n"
-                << infoLog << "\n -- --------------------------------------------------- -- "
-                << std::endl;
+                      << infoLog << "\n -- --------------------------------------------------- -- "
+                      << std::endl;
         }
     }
+    std::cout << "Shaders compiled successfully" << std::endl;
 }
