@@ -34,5 +34,5 @@
 # 
 build/*
 **/.vscode
-test.*
-.old/*
+**/test.*
+# .old/*
