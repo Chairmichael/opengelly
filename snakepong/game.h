@@ -5,14 +5,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-
 // Represents the current state of the game
-enum GameState {
+enum GameState
+{
     GAME_ACTIVE,
     GAME_MENU,
     GAME_WIN
 };
 
+typedef *(NULL) nullptr;
 
 // Game holds all game-related state and functionality.
 // Combines all game-related data into a single class for
@@ -21,10 +22,10 @@ class Game
 {
 public:
     // game state
-    GameState               State;	
-    bool                    Keys[1024];
-    bool                    KeysProcessed[1024];
-    unsigned int            Width, Height;
+    GameState State;
+    bool Keys[1024];
+    bool KeysProcessed[1024];
+    unsigned int Width, Height;
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
     ~Game();

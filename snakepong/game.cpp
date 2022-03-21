@@ -5,12 +5,12 @@
 
 #include "game.h"
 #include "resource_manager.h"
-#include "sprite_renderer.h"
+#include "renderer2d.h"
 #include "game_object.h"
 #include "post_processor.h"
 
 // Game-related State data
-SpriteRenderer *Renderer;
+Renderer2D *Renderer;
 GameObject *Player;
 PostProcessor *Effects;
 
@@ -31,17 +31,20 @@ Game::~Game()
 void Game::Init()
 {
     // load shaders
+    ResourceManager::LoadShader("simple.vs", "simple.fs", nullptr, "simple");
     ResourceManager::LoadShader("sprite.vs", "sprite.fs", nullptr, "sprite");
-    ResourceManager::LoadShader("post_processing.vs", "post_processing.fs", nullptr, "postprocessing");
+    // ResourceManager::LoadShader("post_processing.vs", "post_processing.fs", nullptr, "postprocessing");
 
     // configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width), static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
+    ResourceManager::GetShader("simple").Use().SetInteger("simple", 0);
+    ResourceManager::GetShader("simple").SetMatrix4("projection", projection);
     ResourceManager::GetShader("sprite").Use().SetInteger("sprite", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 
     // set render-specific controls
-    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
-    Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+    Renderer = new Renderer2D(ResourceManager::GetShader("sprite"), ResourceManager::GetShader("simple"));
+    // Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
     // configure game objects
 }

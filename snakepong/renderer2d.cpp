@@ -1,21 +1,21 @@
 
-#include "sprite_renderer.h"
+#include "renderer2d.h"
 
-SpriteRenderer::SpriteRenderer(Shader shader)
+Renderer2D::Renderer2D(Shader spriteShader, Shader simpleShader)
 {
-    this->shader = shader;
+    this->spriteShader = spriteShader;
     this->initRenderData();
 }
 
-SpriteRenderer::~SpriteRenderer()
+Renderer2D::~Renderer2D()
 {
     glDeleteVertexArrays(1, &this->quadVAO);
 }
 
-void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
+void Renderer2D::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
     // prepare transformations
-    this->shader.Use();
+    this->spriteShader.Use();
     glm::mat4 model = glm::mat4(1.0f);
     // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
     model = glm::translate(model, glm::vec3(position, 0.0f));
@@ -26,10 +26,10 @@ void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec
 
     model = glm::scale(model, glm::vec3(size, 1.0f)); // last scale
 
-    this->shader.SetMatrix4("model", model);
+    this->spriteShader.SetMatrix4("model", model);
 
     // render textured quad
-    this->shader.SetVector3f("spriteColor", color);
+    this->spriteShader.SetVector3f("spriteColor", color);
 
     glActiveTexture(GL_TEXTURE0);
     texture.Bind();
@@ -39,7 +39,7 @@ void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::initRenderData()
+void Renderer2D::initRenderData()
 {
     // configure VAO/VBO
     unsigned int VBO;
