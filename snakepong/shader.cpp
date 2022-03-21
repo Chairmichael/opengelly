@@ -96,11 +96,9 @@ void Shader::SetVector4f(const char *name, const glm::vec4 &value, bool useShade
 }
 void Shader::SetMatrix4(const char *name, const glm::mat4 &matrix, bool useShader)
 {
-    std::cout << "projection matrix" << glm::to_string(matrix) << std::endl;
     if (useShader)
         this->Use();
     glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, false, glm::value_ptr(matrix));
-    std::cout << "Set mat" << std::endl;
 }
 
 void Shader::checkCompileErrors(unsigned int object, std::string type)

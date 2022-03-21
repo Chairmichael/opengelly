@@ -12,9 +12,7 @@
 // Game-related State data
 Renderer2D *Renderer;
 GameObject *Player;
-PostProcessor *Effects;
-
-float ShakeTime = 0.0f;
+// PostProcessor *Effects;
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_MENU), Keys(), KeysProcessed(), Width(width), Height(height)
@@ -24,8 +22,6 @@ Game::Game(unsigned int width, unsigned int height)
 Game::~Game()
 {
     delete Renderer;
-    delete Player;
-    delete Effects;
 }
 
 void Game::Init()
@@ -75,6 +71,7 @@ void Game::Render()
 {
     if (this->State == GAME_ACTIVE || this->State == GAME_MENU || this->State == GAME_WIN)
     {
+        Renderer->DrawQuad(glm::vec2(30, 30), glm::vec2(100, 100), glm::vec3(1, 1, 1));
     }
     if (this->State == GAME_MENU)
     {

@@ -1,10 +1,20 @@
 flags = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl
-srcfiles = program.cpp game.cpp shader.cpp resource_manager.cpp texture.cpp sprite_renderer.cpp post_processor.cpp stb_image.cpp glad.c
-objfiles = program.o game.o shader.o resource_manager.o texture.o sprite_renderer.o post_processor.o stb_image.o glad.o
+staticfiles = shader.cpp resource_manager.cpp texture.cpp post_processor.cpp stb_image.cpp glad.c
+dynamicfiles = program.cpp game.cpp renderer2d.cpp
+srcfiles = $(dynamicfiles) $(staticfiles)
+objfiles = program.o game.o shader.o resource_manager.o texture.o renderer2d.o post_processor.o stb_image.o glad.o
 outfile = program.out
 
 default: $(objfiles)
 	g++ -o $(outfile) $(objfiles) $(flags)
+
+re:
+	g++ -c $(dynamicfiles)
+	g++ -o $(outfile) $(objfiles) $(flags)
+
+all:
+	make clean
+	make
 
 # $(objfiles):
 # 	g++ -c $(srcfiles)
@@ -24,8 +34,8 @@ resource_manager.o:
 game_object.o:
 	g++ -c game_object.cpp
 
-sprite_renderer.o:
-	g++ -c sprite_renderer.cpp
+renderer2d.o:
+	g++ -c renderer2d.cpp
 
 texture.o:
 	g++ -c texture.cpp
