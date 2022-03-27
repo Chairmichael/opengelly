@@ -127,5 +127,5 @@ void Shader::checkCompileErrors(unsigned int object, std::string type)
                       << std::endl;
         }
     }
-    std::cout << "Shaders compiled successfully" << std::endl;
+    // std::cout << "Shaders compiled successfully" << std::endl;
 }

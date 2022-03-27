@@ -12,9 +12,9 @@ re:
 	g++ -c $(dynamicfiles)
 	g++ -o $(outfile) $(objfiles) $(flags)
 
-all:
-	make clean
-	make
+# all:
+# 	rm $(objfiles) $(outfile)
+# 	g++ -o $(outfile) $(objfiles) $(flags)
 
 # $(objfiles):
 # 	g++ -c $(srcfiles)

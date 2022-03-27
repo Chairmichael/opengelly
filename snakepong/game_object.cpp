@@ -9,5 +9,9 @@ GameObject::GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec
 
 void GameObject::Draw(Renderer2D &renderer)
 {
-    renderer.DrawSprite(this->Sprite, this->Position, this->Size, this->Rotation, this->Color);
+    if (this->UsesSprite == true)
+        renderer.DrawSprite(this->Sprite, this->Position, this->Size, this->Color, this->Rotation);
+    else
+        renderer.DrawQuad(this->Position, this->Size, this->Color, this->Rotation);
+
 }

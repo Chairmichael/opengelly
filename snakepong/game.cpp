@@ -11,7 +11,6 @@
 
 // Game-related State data
 Renderer2D *Renderer;
-GameObject *Player;
 // PostProcessor *Effects;
 
 Game::Game(unsigned int width, unsigned int height)
@@ -27,12 +26,12 @@ Game::~Game()
 void Game::Init()
 {
     // load shaders
-    ResourceManager::LoadShader("simple.vs", "simple.fs", nullptr, "simple");
-    ResourceManager::LoadShader("sprite.vs", "sprite.fs", nullptr, "sprite");
+    ResourceManager::LoadShader("shaders/simple.vs", "shaders/simple.fs", nullptr, "simple");
+    ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     // ResourceManager::LoadShader("post_processing.vs", "post_processing.fs", nullptr, "postprocessing");
 
     // configure shaders
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width), static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, (float)this->Width, (float)this->Height, 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("simple").Use().SetInteger("simple", 0);
     ResourceManager::GetShader("simple").SetMatrix4("projection", projection);
     ResourceManager::GetShader("sprite").Use().SetInteger("sprite", 0);
@@ -40,8 +39,10 @@ void Game::Init()
 
     // set render-specific controls
     Renderer = new Renderer2D(ResourceManager::GetShader("sprite"), ResourceManager::GetShader("simple"));
-    // Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
+    // Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+    // load textures
+    ResourceManager::LoadTexture("assets/awesomeface.png", true, "face");
     // configure game objects
 }
 
@@ -71,7 +72,9 @@ void Game::Render()
 {
     if (this->State == GAME_ACTIVE || this->State == GAME_MENU || this->State == GAME_WIN)
     {
-        Renderer->DrawQuad(glm::vec2(30, 30), glm::vec2(100, 100), glm::vec3(1, 1, 1));
+        Renderer->DrawQuad(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        Renderer->DrawSprite(ResourceManager::GetTexture("face"),
+                             glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f), glm::vec3(0.0f, 1.0f, 0.0f), 45.0f);
     }
     if (this->State == GAME_MENU)
     {
